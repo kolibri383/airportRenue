@@ -20,13 +20,11 @@ public class AirportApplication {
 
     public static void main(String[] args) {
         String request = inputRequest();
-
         AirportCSVService airportCSVService = new AirportCSVServiceImpl();
         ArrayList<Airport> result;
         long startTime = System.currentTimeMillis();
         result = (args.length==1)? airportCSVService.geDataAirports(request,Integer.parseInt(args[0])):airportCSVService.geDataAirports(request);
         long searchExecutionTime = System.currentTimeMillis() - startTime;
-
         result.forEach(it-> System.out.println(it.getData()));
         System.out.println("Количество найденых строк: "+result.size());
         System.out.println("Время, затраченное на поиск: "+searchExecutionTime+" ms");
