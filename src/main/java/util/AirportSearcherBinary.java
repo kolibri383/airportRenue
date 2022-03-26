@@ -9,24 +9,46 @@ import java.util.stream.Collectors;
 public class AirportSearcherBinary implements AirportSearcher {
     private ArrayList<Airport> dataSource;
 
-    public AirportSearcherBinary(ArrayList<Airport> dataSource){this.dataSource = dataSource;}
-    public ArrayList<Airport> getDataSource() {return dataSource;}
+    public AirportSearcherBinary(ArrayList<Airport> dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public ArrayList<Airport> getDataSource() {
+        return dataSource;
+    }
+
     public void setDataSource(ArrayList<Airport> dataSource) {
         this.dataSource = dataSource;
     }
 
+    public ArrayList<Integer> searchLineByQuery(String query) {
+        Collections.sort(dataSource);
+        ArrayList<Integer> result = new ArrayList<>();
+        int number = binarySearch(query.toLowerCase()); //ищем удолитвроящий запросу элемент
+        if (number >= 0) {
+            //Находим оставшиеся элементы
+            result.addAll(findItemsByRangeAndQuery(number - 1, query, false));
+            result.add(number);
+            result.addAll(findItemsByRangeAndQuery(number + 1, query, true));
+        }
+        if (!result.isEmpty())//Получаем нужные номера строк
+            result = result.stream().map(it -> dataSource.get(it).getId())
+                    .collect(Collectors.toCollection(ArrayList::new));
+        return result;
+    }
+
     //поиск элемента с совподающим началом строки
-    private int binarySearch(String request){
-        if(request.isEmpty())
+    private int binarySearch(String query) {
+        if (query.isEmpty())
             return -1;
         int low = 0;
         int high = dataSource.size() - 1;
-        while (low<=high){
+        while (low <= high) {
             int mid = (low + high) >>> 1;
             String midVal = dataSource.get(mid).getData().toLowerCase();
-            if(midVal.startsWith(request))
+            if (midVal.startsWith(query))
                 return mid;
-            else if(midVal.compareTo(request)<0)
+            else if (midVal.compareTo(query) < 0)
                 low = mid + 1;
             else
                 high = mid - 1;
@@ -34,32 +56,27 @@ public class AirportSearcherBinary implements AirportSearcher {
         return -1;
     }
 
-    private ArrayList<Integer> findItemsByRangeAndRequest(int startIndex, String request, boolean isDown){
-        ArrayList<Integer> result = new ArrayList<>();
-        int increment = (isDown)? 1: -1; //Опредлеям направления прохода по массиву
-        int i = startIndex;
-        //получаем элементы совподающие с запросом
-        while (i>=0&&i<dataSource.size()&&dataSource.get(i).getData().toLowerCase().startsWith(request.toLowerCase())){
-            result.add(i);
-            i+=increment;
-        }
-        return result;
+    private boolean isInOfRangeDataSource(int currentIndex) {
+        return currentIndex >= 0 && currentIndex < dataSource.size();
     }
 
+    private boolean isLineStartWith(String query, int lineIndex) {
+        return dataSource
+                .get(lineIndex)
+                .getData()
+                .toLowerCase()
+                .startsWith(query.toLowerCase());
+    }
 
-    public ArrayList<Integer> searchLineByRequest(String request) {
-        Collections.sort(dataSource);
+    private ArrayList<Integer> findItemsByRangeAndQuery(int startIndex, String query, boolean isDown) {
         ArrayList<Integer> result = new ArrayList<>();
-        int number = binarySearch(request.toLowerCase()); //ищем удолитвроящий запросу элемент
-        if(number>=0){
-            //Находим оставшиеся элементы
-            result.addAll(findItemsByRangeAndRequest(number-1,request,false));
-            result.add(number);
-            result.addAll(findItemsByRangeAndRequest(number+1,request,true));
+        int increment = (isDown) ? 1 : -1; //Опредлеям направления прохода по массиву
+        int i = startIndex;
+        //получаем элементы совподающие с запросом
+        while (isInOfRangeDataSource(i) && isLineStartWith(query, i)) {
+            result.add(i);
+            i += increment;
         }
-        if(!result.isEmpty())//Получаем нужные номера строк
-            result = result.stream().map( it -> dataSource.get(it).getId())
-                    .collect(Collectors.toCollection(ArrayList::new));
         return result;
     }
 

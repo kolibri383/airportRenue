@@ -3,5 +3,5 @@ package util;
 import java.util.ArrayList;
 
 public interface AirportSearcher {
-    ArrayList<Integer> searchLineByRequest(String request);
+    ArrayList<Integer> searchLineByQuery(String query);
 }
