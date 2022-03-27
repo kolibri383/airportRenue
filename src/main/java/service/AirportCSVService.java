@@ -2,10 +2,10 @@ package service;
 
 import model.Airport;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 public interface AirportCSVService {
-    ArrayList<Airport> geDataAirports(String query, int numberColumn);
+    Collection<Airport> geDataAirports(String query, int numberColumn);
 
-    ArrayList<Airport> geDataAirports(String query);
+    Collection<Airport> geDataAirports(String query);
 }

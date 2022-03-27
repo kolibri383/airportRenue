@@ -1,3 +1,4 @@
+
 import model.Airport;
 import service.AirportCSVService;
 import service.AirportCSVServiceImpl;
@@ -13,13 +14,14 @@ public class AirportApplication {
         ArrayList<Airport> result;
         long startTime = System.currentTimeMillis();
         if (args.length == 1)
-            result = airportCSVService.geDataAirports(query, Integer.parseInt(args[0]));
+            result = new ArrayList<>(airportCSVService.geDataAirports(query, Integer.parseInt(args[0])));
         else
-            result = airportCSVService.geDataAirports(query);
+            result = new ArrayList<>(airportCSVService.geDataAirports(query));
         long searchExecutionTime = System.currentTimeMillis() - startTime;
         result.forEach(it -> System.out.println(it.getData()));
         System.out.println("Количество найденых строк: " + result.size());
         System.out.println("Время, затраченное на поиск: " + searchExecutionTime + " ms");
+
     }
 
     private static String inputQuery() {
@@ -32,6 +34,5 @@ public class AirportApplication {
         }
         return query;
     }
-
 
 }

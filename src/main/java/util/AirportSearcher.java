@@ -1,7 +1,7 @@
 package util;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface AirportSearcher {
-    ArrayList<Integer> searchLineByQuery(String query);
+    List<Integer> searchLineByQuery(String query);
 }

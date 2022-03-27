@@ -3,11 +3,13 @@ package repository;
 import model.Airport;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
 
 public interface AirportRepository {
-    ArrayList<Airport> getByColumn(int numberColumn);
+    Collection<Airport> getByColumn(int numberColumn);
 
-    ArrayList<Airport> getByRows(ArrayList<Integer> lineNumbers);
+    Collection<Airport> getByRows(ArrayList<Integer> lineNumbers);
 
-    ArrayList<Airport> getByColumn();
+    Collection<Airport> getByColumn();
 }

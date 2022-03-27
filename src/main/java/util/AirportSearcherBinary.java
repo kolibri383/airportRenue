@@ -2,8 +2,7 @@ package util;
 
 import model.Airport;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AirportSearcherBinary implements AirportSearcher {
@@ -13,7 +12,7 @@ public class AirportSearcherBinary implements AirportSearcher {
         this.dataSource = dataSource;
     }
 
-    public ArrayList<Airport> getDataSource() {
+    public Collection<Airport> getDataSource() {
         return dataSource;
     }
 
@@ -21,7 +20,8 @@ public class AirportSearcherBinary implements AirportSearcher {
         this.dataSource = dataSource;
     }
 
-    public ArrayList<Integer> searchLineByQuery(String query) {
+    @Override
+    public List<Integer> searchLineByQuery(String query) {
         Collections.sort(dataSource);
         ArrayList<Integer> result = new ArrayList<>();
         int number = binarySearch(query.toLowerCase()); //ищем удолитвроящий запросу элемент
@@ -32,9 +32,12 @@ public class AirportSearcherBinary implements AirportSearcher {
             result.addAll(findItemsByRangeAndQuery(number + 1, query, true));
         }
         if (!result.isEmpty())//Получаем нужные номера строк
-            result = result.stream().map(it -> dataSource.get(it).getId())
+            result = result.stream().map(it ->
+                            dataSource.get(it).getId())
                     .collect(Collectors.toCollection(ArrayList::new));
-        return result;
+        return result.stream()
+                .parallel()
+                .collect(Collectors.toList());
     }
 
     //поиск элемента с совподающим началом строки
@@ -68,7 +71,7 @@ public class AirportSearcherBinary implements AirportSearcher {
                 .startsWith(query.toLowerCase());
     }
 
-    private ArrayList<Integer> findItemsByRangeAndQuery(int startIndex, String query, boolean isDown) {
+    private List<Integer> findItemsByRangeAndQuery(int startIndex, String query, boolean isDown) {
         ArrayList<Integer> result = new ArrayList<>();
         int increment = (isDown) ? 1 : -1; //Опредлеям направления прохода по массиву
         int i = startIndex;
