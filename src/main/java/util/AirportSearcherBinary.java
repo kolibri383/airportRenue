@@ -23,21 +23,21 @@ public class AirportSearcherBinary implements AirportSearcher {
     @Override
     public List<Integer> searchLineByQuery(String query) {
         Collections.sort(dataSource);
-        ArrayList<Integer> result = new ArrayList<>();
-        int number = binarySearch(query.toLowerCase()); //ищем удолитвроящий запросу элемент
+        List<Integer> result = new ArrayList<>();
+        int number = binarySearch(query); //ищем удолитвроящий запросу элемент
         if (number >= 0) {
+
             //Находим оставшиеся элементы
             result.addAll(findItemsByRangeAndQuery(number - 1, query, false));
             result.add(number);
             result.addAll(findItemsByRangeAndQuery(number + 1, query, true));
+
         }
         if (!result.isEmpty())//Получаем нужные номера строк
             result = result.stream().map(it ->
                             dataSource.get(it).getId())
-                    .collect(Collectors.toCollection(ArrayList::new));
-        return result.stream()
-                .parallel()
-                .collect(Collectors.toList());
+                    .collect(Collectors.toList());
+        return result;
     }
 
     //поиск элемента с совподающим началом строки
@@ -68,7 +68,7 @@ public class AirportSearcherBinary implements AirportSearcher {
                 .get(lineIndex)
                 .getData()
                 .toLowerCase()
-                .startsWith(query.toLowerCase());
+                .startsWith(query);
     }
 
     private List<Integer> findItemsByRangeAndQuery(int startIndex, String query, boolean isDown) {

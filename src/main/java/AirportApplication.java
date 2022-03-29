@@ -1,5 +1,5 @@
 
-import model.Airport;
+import configuration.AirportYAMLConfig;
 import service.AirportCSVService;
 import service.AirportCSVServiceImpl;
 
@@ -9,16 +9,21 @@ import java.util.Scanner;
 public class AirportApplication {
 
     public static void main(String[] args) {
-        String query = inputQuery();
-        AirportCSVService airportCSVService = new AirportCSVServiceImpl();
-        ArrayList<Airport> result;
+        var config = AirportYAMLConfig.loadConfig().getContext();
+        String query = inputQuery().toLowerCase();
+        AirportCSVService airportCSVService = new AirportCSVServiceImpl(config);
+        ArrayList<String> result;
+        int numberColumn = config.getNumberColumn();
+        if (args.length == 1) {
+            int userNumberColumn = Integer.parseInt(args[0]);
+            if (userNumberColumn > 0 && userNumberColumn < 13)
+                numberColumn = userNumberColumn;
+        }
+        System.out.println("Поиск будет выполнен по столбцу номер: " + numberColumn);
         long startTime = System.currentTimeMillis();
-        if (args.length == 1)
-            result = new ArrayList<>(airportCSVService.geDataAirports(query, Integer.parseInt(args[0])));
-        else
-            result = new ArrayList<>(airportCSVService.geDataAirports(query));
+        result = new ArrayList<>(airportCSVService.geDataAirports(query, numberColumn));
         long searchExecutionTime = System.currentTimeMillis() - startTime;
-        result.forEach(it -> System.out.println(it.getData()));
+        result.forEach(System.out::println);
         System.out.println("Количество найденых строк: " + result.size());
         System.out.println("Время, затраченное на поиск: " + searchExecutionTime + " ms");
 
