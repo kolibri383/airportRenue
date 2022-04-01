@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class AirportSearcherBinary implements AirportSearcher {
     private ArrayList<Airport> dataSource;
+    private long searchingTime;
 
     public AirportSearcherBinary(ArrayList<Airport> dataSource) {
         this.dataSource = dataSource;
@@ -22,7 +23,9 @@ public class AirportSearcherBinary implements AirportSearcher {
 
     @Override
     public List<Integer> searchLineByQuery(String query) {
+        Timer timer = new Timer();
         Collections.sort(dataSource);
+        timer.start();
         List<Integer> result = new ArrayList<>();
         int number = binarySearch(query); //ищем удолитвроящий запросу элемент
         if (number >= 0) {
@@ -37,6 +40,8 @@ public class AirportSearcherBinary implements AirportSearcher {
             result = result.stream().map(it ->
                             dataSource.get(it).getId())
                     .collect(Collectors.toList());
+        timer.stop();
+        searchingTime = timer.getRangeTime();
         return result;
     }
 
@@ -83,4 +88,8 @@ public class AirportSearcherBinary implements AirportSearcher {
         return result;
     }
 
+    @Override
+    public long getSearchExecutionTime() {
+        return searchingTime;
+    }
 }

@@ -1,8 +1,10 @@
 package repository;
 
+import au.com.bytecode.opencsv.CSVReader;
 import model.Airport;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -14,10 +16,10 @@ public class AirportCSVRepository implements AirportRepository {
     }
 
     @Override
-    public Collection<Airport> getByColumn(int numberColumn, String filePath, String query) {
+    public Collection<Airport> getByColumn(int numberColumn, String filePath) {
         ArrayList<Airport> dataAirports = new ArrayList<>();
         try {
-            dataAirports.addAll(dataColumn(numberColumn, filePath, query));
+            dataAirports.addAll(dataColumn(numberColumn, filePath));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,19 +43,18 @@ public class AirportCSVRepository implements AirportRepository {
         return result;
     }
 
-
-    private ArrayList<Airport> dataColumn(int numberColumn, String filePath, String query) throws Exception {
+    private ArrayList<Airport> dataColumn(int numberColumn, String filePath) {
         ArrayList<Airport> data = new ArrayList<Airport>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String currentAirportData;
+            CSVReader reader = new CSVReader(new FileReader(filePath));
+            String[] currentAirportData;
             int currentNumberLine = 1;
-            while ((currentAirportData = reader.readLine()) != null) {
-                currentAirportData = currentAirportData.split(",")[numberColumn].replaceAll("^\"|\"", "");
-                if (currentAirportData.toLowerCase().startsWith(query))
-                    data.add(new Airport(currentNumberLine, currentAirportData));
-                currentNumberLine++;
+            while ((currentAirportData = reader.readNext()) != null) {
+                if (!currentAirportData[numberColumn].isEmpty())
+                    data.add(new Airport(currentNumberLine++, currentAirportData[numberColumn]));
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -85,4 +86,5 @@ public class AirportCSVRepository implements AirportRepository {
         }
         return resultData;
     }
+
 }

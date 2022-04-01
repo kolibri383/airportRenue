@@ -7,7 +7,7 @@ import java.util.Collection;
 
 
 public interface AirportRepository {
-    Collection<Airport> getByColumn(int numberColumn, String filePath, String query);
+    Collection<Airport> getByColumn(int numberColumn, String filePath);
 
     Collection<String> getByRows(ArrayList<Integer> lineNumbers, String filePath);
 }

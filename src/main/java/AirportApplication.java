@@ -16,16 +16,14 @@ public class AirportApplication {
         int numberColumn = config.getNumberColumn();
         if (args.length == 1) {
             int userNumberColumn = Integer.parseInt(args[0]);
-            if (userNumberColumn > 0 && userNumberColumn < 13)
+            if (userNumberColumn > 0 && userNumberColumn < 14)
                 numberColumn = userNumberColumn;
         }
         System.out.println("Поиск будет выполнен по столбцу номер: " + numberColumn);
-        long startTime = System.currentTimeMillis();
         result = new ArrayList<>(airportCSVService.geDataAirports(query, numberColumn));
-        long searchExecutionTime = System.currentTimeMillis() - startTime;
         result.forEach(System.out::println);
         System.out.println("Количество найденых строк: " + result.size());
-        System.out.println("Время, затраченное на поиск: " + searchExecutionTime + " ms");
+        System.out.println("Время, затраченное на поиск: " + airportCSVService.getSearchExecutionTime() + " ms");
 
     }
 
